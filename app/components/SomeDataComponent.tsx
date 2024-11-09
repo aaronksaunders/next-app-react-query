@@ -1,24 +1,18 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { getSomeData, insertSomeData, SomeData } from "../actions";
+import { SomeData } from "../actions";
 import { useState } from "react";
 import Link from "next/link";
+import { useSomeData } from "../hooks/useSomeData";
 
 export const SomeDataComponent = () => {
   const [inputData, setInputData] = useState("");
+  const { data, error, isLoading, addData } = useSomeData();
 
   const handleAddData = async () => {
-    await insertSomeData(inputData);
+    await addData(inputData);
     setInputData("");
-    refetch();
   };
-
-  const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ["some-data"],
-    queryFn: getSomeData,
-    staleTime: 5000, // Data stays fresh for 5 seconds
-  });
 
   return (
     <div>
@@ -43,7 +37,7 @@ export const SomeDataComponent = () => {
           </button>
         </div>
         <div className="flex flex-col gap-2 border border-gray-300 rounded p-2 mt-4">
-          {data?.data.map((item) => (
+          {data?.map((item) => (
             <SomeDataItem key={item.id} item={item} />
           ))}
         </div>
